@@ -1,5 +1,6 @@
 ﻿using EcommerceCRUDAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EcommerceCRUDAPI.Controllers
 {
@@ -12,8 +13,8 @@ namespace EcommerceCRUDAPI.Controllers
         public BrandController(BrandContext dbContext){
             _dbContext= dbContext;
 }
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
+        [HttpGet("{id}")]
+        public async Task<ActionResult<IEnumerable<Brands>>> GetBrands()
         {
             if (_dbContext.Brands == null)
             {
@@ -23,7 +24,7 @@ namespace EcommerceCRUDAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands(int id)
+        public async Task<ActionResult<IEnumerable<Brands>>> GetBrands(int id)
         {
             if (_dbContext.Brands == null)
             {
@@ -36,6 +37,16 @@ namespace EcommerceCRUDAPI.Controllers
                 return NotFound();
             }
             return brand;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Brands>> PostBrands(Brands brand)
+        {
+            _dbContext.Brands.Add(brand);
+            await _dbContext.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetBrands), new {id = brand.ID},brand);
+
         }
     }
 }
